@@ -19,7 +19,7 @@ Text Recaster currently supports:
 - **Pretty print JSON**
   - Converts compact JSON into an indented, readable format
   - Displays parser errors when invalid JSON is provided
-  -
+
 It is not intended to replace full-featured developer tools, SQL formatters, XML editors, or JSON editors. It is meant to be a quick copy/paste cleanup utility.
 
 ## Screenshots
