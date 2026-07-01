@@ -1,0 +1,4 @@
+/.venv
+/build
+/setup.cfg
+/TextRecaster.spec
