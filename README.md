@@ -39,13 +39,9 @@ Select **Format XML** and click **Process text**:
 ## Download / Run
 
 Download the latest release from the project’s GitHub releases page, unzip the folder, and run:
-
-```text
 TextRecaster.exe
 
 If you want to build TextRecaster from source on Windows, a helper PowerShell build script is included:
-
-```powershell
 .\pyinstaller_command.ps1
 
 
