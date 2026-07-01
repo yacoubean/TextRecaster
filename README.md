@@ -19,7 +19,7 @@ Text Recaster currently supports:
 - **Pretty print JSON**
   - Converts compact JSON into an indented, readable format
   - Displays parser errors when invalid JSON is provided
-  - 
+  -
 It is not intended to replace full-featured developer tools, SQL formatters, XML editors, or JSON editors. It is meant to be a quick copy/paste cleanup utility.
 
 ## Screenshots
@@ -42,3 +42,15 @@ Download the latest release from the project’s GitHub releases page, unzip the
 
 ```text
 TextRecaster.exe
+
+If you want to build TextRecaster from source on Windows, a helper PowerShell build script is included:
+
+```powershell
+.\pyinstaller_command.ps1
+
+
+## Platform Notes
+
+Text Recaster is primarily built and packaged for Windows.
+
+The source code uses Python standard-library modules and Tkinter, so it may also run on macOS or Linux if Python and Tkinter are installed. However, packaged builds are platform-specific. A Windows build cannot be used as a macOS or Linux app; users on those platforms would need to build the app on their own system using PyInstaller.

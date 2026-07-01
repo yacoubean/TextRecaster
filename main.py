@@ -21,7 +21,10 @@ class TextRecasterApp:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Text Recaster")
-        self.root.iconbitmap(resource_path("TextRecaster.ico"))
+        try:
+            self.root.iconbitmap(resource_path("TextRecaster.ico"))
+        except tk.TclError:
+            print("Icon file not found. Continuing without icon.")
         self.WINDOW_WIDTH = 800
         self.WINDOW_HEIGHT = 600
         self.BG = '#ffffff'
