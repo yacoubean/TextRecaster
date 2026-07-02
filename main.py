@@ -77,6 +77,12 @@ class TextRecasterApp:
     def clean_sql_log(self, content):
         try:
             cleaned = content
+            regex_match = re.search(r"(?im)^\s*Message\s*$", cleaned)
+            if regex_match:
+                cleaned = cleaned[regex_match.end():].strip()
+            else:
+                cleaned = cleaned.strip()
+
             cleaned = re.sub("Executed.*?\\d+-\\d+\\s\\d+:\\d+:\\d+\\.\\d+\\s+", "", cleaned).strip()
             cleaned = re.sub("Code:\\s\\dx.*?\\s+", "", cleaned).strip()
             cleaned = re.sub("\\sEnd\\sError\\s", "", cleaned).strip()
