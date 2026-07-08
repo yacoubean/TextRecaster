@@ -33,23 +33,48 @@ class TextRecasterApp:
         self.root.rowconfigure(0, weight=1)
         self.root.rowconfigure(1, weight=0)
         self.root.columnconfigure(0, weight=1)
-        self.root.columnconfigure(1, weight=1)
 
         self.text_box = tk.Text(self.root, wrap="word")
-        self.text_box.grid(column=0, row=0, columnspan=2, sticky="nsew", padx=10)
+        self.text_box.grid(
+                        column=0,
+                        row=0,
+                        sticky="nsew",
+                        padx=10
+                        )
 
+        # Frame to hold the dropdown and buttons
+        self.controls_frame = tk.Frame(self.root, bg=self.BG)
+        self.controls_frame.grid(
+            column=0,
+            row=1,
+            pady=10
+        )
+
+        # Dropdown menu for format selection
         dropdown_list = ["SQL Agent log", "Format XML", "Format JSON", "URL Decode", "URL Encode"]
-        self.dropdown = ttk.Combobox(self.root, values=dropdown_list, state="readonly")
+        self.dropdown = ttk.Combobox(
+                        self.controls_frame,
+                        values=dropdown_list,
+                        state="readonly"
+                        )
         self.dropdown.set("Choose a format")
-        self.dropdown.grid(column=0, row=1, sticky="e", pady=10)
+        self.dropdown.grid(column=0, row=0, padx=(0, 5))
 
         # Process text button
         self.button = tk.Button(
-                        self.root,
+                        self.controls_frame,
                         text="Process text",
                         command=self.on_button_click
                         )
-        self.button.grid(column=1, row=1, sticky="w", padx=5, pady=10)
+        self.button.grid(column=1, row=0, padx=5)
+
+        # Copy to clipboard button
+        self.button2 = tk.Button(
+                        self.controls_frame,
+                        text="Copy to clipboard",
+                        command=lambda: self.copy_to_clipboard(self.text_box.get("1.0", tk.END).strip())
+                        )
+        self.button2.grid(column=2, row=0, padx=(5, 0))
 
     def on_button_click(self):
         input_text = self.text_box.get("1.0", tk.END).strip()
@@ -75,6 +100,10 @@ class TextRecasterApp:
             processed_text = url_encode(input_text)
 
         return processed_text
+
+    def copy_to_clipboard(self, text):
+        self.root.clipboard_clear()
+        self.root.clipboard_append(text)
 
     def run(self):
         self.root.mainloop()
