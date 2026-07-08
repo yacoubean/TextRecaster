@@ -1,10 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-import re
-import xml.dom.minidom
-import json
 import os
 import sys
+from recasters import clean_sql_log, format_xml, format_json, url_decode, url_encode
 
 
 def resource_path(relative_path):
@@ -40,7 +38,7 @@ class TextRecasterApp:
         self.text_box = tk.Text(self.root, wrap="word")
         self.text_box.grid(column=0, row=0, columnspan=2, sticky="nsew", padx=10)
 
-        dropdown_list = ["SQL Agent log", "Format XML", "Format JSON"]
+        dropdown_list = ["SQL Agent log", "Format XML", "Format JSON", "URL Decode", "URL Encode"]
         self.dropdown = ttk.Combobox(self.root, values=dropdown_list, state="readonly")
         self.dropdown.set("Choose a format")
         self.dropdown.grid(column=0, row=1, sticky="e", pady=10)
@@ -66,56 +64,17 @@ class TextRecasterApp:
         processed_text = ""
 
         if choice == "SQL Agent log":
-            processed_text = self.clean_sql_log(input_text)
+            processed_text = clean_sql_log(input_text)
         elif choice == "Format XML":
-            processed_text = self.format_xml(input_text)
+            processed_text = format_xml(input_text)
         elif choice == "Format JSON":
-            processed_text = self.format_json(input_text)
+            processed_text = format_json(input_text)
+        elif choice == "URL Decode":
+            processed_text = url_decode(input_text)
+        elif choice == "URL Encode":
+            processed_text = url_encode(input_text)
 
         return processed_text
-
-    def clean_sql_log(self, content):
-        try:
-            cleaned = content
-            regex_match = re.search(r"(?im)^\s*Message\s*$", cleaned)
-            if regex_match:
-                cleaned = cleaned[regex_match.end():].strip()
-            else:
-                cleaned = cleaned.strip()
-
-            cleaned = re.sub("Executed.*?\\d+-\\d+\\s\\d+:\\d+:\\d+\\.\\d+\\s+", "", cleaned).strip()
-            cleaned = re.sub("Code:\\s\\dx.*?\\s+", "", cleaned).strip()
-            cleaned = re.sub("\\sEnd\\sError\\s", "", cleaned).strip()
-            cleaned = re.sub("Error:.*?\\.\\d\\d\\s\\s", "", cleaned).strip()
-            cleaned = re.sub("\\s\\s", "\r\n\r\n", cleaned).strip()
-
-            cleaned_lines = ""
-            # loop over each line from the input
-            for line in cleaned.splitlines():
-                if cleaned_lines.find(line.strip()) == -1:  # remove duplicates
-                    # trim extra whitspace and add two line breaks back to the end of each line
-                    cleaned_lines += line.strip() + "\r\n\r\n"
-            return cleaned_lines.strip()
-        except Exception as e:
-            return f"Error parsing SQL Agent log: {e}"
-
-    def format_xml(self, xml_string):
-        try:
-            # Parse the XML string and pretty print it
-            dom = xml.dom.minidom.parseString(xml_string)
-            pretty_xml_as_string = dom.toprettyxml(indent="   ")
-            return pretty_xml_as_string.strip()
-        except Exception as e:
-            return f"Error formatting XML: {e}"
-
-    def format_json(self, json_string):
-        try:
-            # Parse the JSON string and pretty print it
-            parsed_json = json.loads(json_string)
-            pretty_json_as_string = json.dumps(parsed_json, indent=3)
-            return pretty_json_as_string.strip()
-        except Exception as e:
-            return f"Error formatting JSON: {e}"
 
     def run(self):
         self.root.mainloop()
