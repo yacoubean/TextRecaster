@@ -7,25 +7,37 @@ from urllib.parse import quote, unquote
 def clean_sql_log(content):
     try:
         cleaned = content
+
+        # Normalize all incoming line endings to Tkinter-friendly \n
+        cleaned = cleaned.replace("\r\n", "\n").replace("\r", "\n")
+
         regex_match = re.search(r"(?im)^\s*Message\s*$", cleaned)
         if regex_match:
             cleaned = cleaned[regex_match.end():].strip()
         else:
             cleaned = cleaned.strip()
 
-        cleaned = re.sub("Executed.*?\\d+-\\d+\\s\\d+:\\d+:\\d+\\.\\d+\\s+", "", cleaned).strip()
-        cleaned = re.sub("Code:\\s\\dx.*?\\s+", "", cleaned).strip()
-        cleaned = re.sub("\\sEnd\\sError\\s", "", cleaned).strip()
-        cleaned = re.sub("Error:.*?\\.\\d\\d\\s\\s", "", cleaned).strip()
-        cleaned = re.sub("\\s\\s", "\r\n\r\n", cleaned).strip()
+        cleaned = re.sub(r"Executed.*?\d+-\d+\s\d+:\d+:\d+\.\d+\s+", "", cleaned).strip()
+        cleaned = re.sub(r"Code:\s\dx.*?\s+", "", cleaned).strip()
+        cleaned = re.sub(r"\sEnd\sError\s", "", cleaned).strip()
+        cleaned = re.sub(r"Error:.*?\.\d\d\s\s", "", cleaned).strip()
 
-        cleaned_lines = ""
-        # loop over each line from the input
+        # If the SQL Agent text uses multiple spaces as separators,
+        # convert those runs of spaces/tabs into paragraph breaks.
+        # This avoids matching existing line feeds.
+        cleaned = re.sub(r"[ \t]{2,}", "\n\n", cleaned).strip()
+
+        cleaned_lines = []
+
         for line in cleaned.splitlines():
-            if cleaned_lines.find(line.strip()) == -1:  # remove duplicates
-                # trim extra whitspace and add two line breaks back to the end of each line
-                cleaned_lines += line.strip() + "\r\n\r\n"
-        return cleaned_lines.strip()
+            line = line.strip()
+            if not line:
+                continue
+            if line not in cleaned_lines:
+                cleaned_lines.append(line)
+
+        return "\n\n".join(cleaned_lines)
+
     except Exception as e:
         return f"Error parsing SQL Agent log: {e}"
 

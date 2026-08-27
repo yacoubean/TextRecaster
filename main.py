@@ -102,8 +102,14 @@ class TextRecasterApp:
         return processed_text
 
     def copy_to_clipboard(self, text):
+        # Normalize line endings to Windows style before copying to clipboard
+        text = text.replace("\r\n", "\n").replace("\r", "\n")
+
         self.root.clipboard_clear()
         self.root.clipboard_append(text)
+
+        # run tkinter's event loop to ensure the clipboard is updated
+        self.root.update()
 
     def run(self):
         self.root.mainloop()
