@@ -81,3 +81,24 @@ def url_encode(url_string):
             return quote(url_string, safe='=&')
     except Exception as e:
         return f"Error encoding URL: {e}"
+
+
+def dtsx_decode(dtsx_string):
+    try:
+        cleaned = dtsx_string
+        cleaned = re.sub(r"&#xA;", "\n", cleaned).strip()
+        cleaned = re.sub(r"&#xD;", "\r", cleaned).strip()
+        cleaned = re.sub(r"&#x9;", "\t", cleaned).strip()
+        cleaned = re.sub(r"&#x20;", " ", cleaned).strip()
+        cleaned = re.sub(r"&#x26;", "&", cleaned).strip()
+        cleaned = re.sub(r"&#x27;", "'", cleaned).strip()
+        cleaned = re.sub(r"&#x3C;", "<", cleaned).strip()
+        cleaned = re.sub(r"&#x3E;", ">", cleaned).strip()
+        cleaned = re.sub(r"&quot;", "\"", cleaned).strip()
+        cleaned = re.sub(r"&apos;", "'", cleaned).strip()
+        cleaned = re.sub(r"&amp;", "&", cleaned).strip()
+        cleaned = re.sub(r"&lt;", "<", cleaned).strip()
+        cleaned = re.sub(r"&gt;", ">", cleaned).strip()
+        return cleaned
+    except Exception as e:
+        return f"Error decoding DTSX: {e}"

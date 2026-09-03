@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import os
 import sys
-from recasters import clean_sql_log, format_xml, format_json, url_decode, url_encode
+from recasters import clean_sql_log, format_xml, format_json, url_decode, url_encode, dtsx_decode
 
 
 def resource_path(relative_path):
@@ -51,7 +51,7 @@ class TextRecasterApp:
         )
 
         # Dropdown menu for format selection
-        dropdown_list = ["SQL Agent log", "Format XML", "Format JSON", "URL Decode", "URL Encode"]
+        dropdown_list = ["SQL Agent log", "DTSX Decode", "Format XML", "Format JSON", "URL Decode", "URL Encode"]
         self.dropdown = ttk.Combobox(
                         self.controls_frame,
                         values=dropdown_list,
@@ -98,7 +98,8 @@ class TextRecasterApp:
             processed_text = url_decode(input_text)
         elif choice == "URL Encode":
             processed_text = url_encode(input_text)
-
+        elif choice == "DTSX Decode":
+            processed_text = dtsx_decode(input_text)
         return processed_text
 
     def copy_to_clipboard(self, text):
