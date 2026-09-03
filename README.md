@@ -43,7 +43,7 @@ Select **DTSX SQL Decode** and click **Process text**:
 
 ## Download / Run
 
-Download the [latest release](https://github.com/yacoubean/TextRecaster/releases/download/0.2/TextRecaster.zip), unzip the folder, and run:
+Download the [latest release](https://github.com/yacoubean/TextRecaster/releases/), unzip the folder, and run:
 TextRecaster.exe
 
 If you want to build TextRecaster from source on Windows, a helper PowerShell build script is included:
