@@ -15,6 +15,16 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
+class AutoHideScrollbar(ttk.Scrollbar):
+    def set(self, first, last):
+        if float(first) <= 0.0 and float(last) >= 1.0:
+            self.grid_remove()
+        else:
+            self.grid()
+
+        super().set(first, last)
+
+
 class TextRecasterApp:
     def __init__(self):
         self.root = tk.Tk()
@@ -34,13 +44,39 @@ class TextRecasterApp:
         self.root.rowconfigure(1, weight=0)
         self.root.columnconfigure(0, weight=1)
 
-        self.text_box = tk.Text(self.root, wrap="word")
+        # Frame containing the text box and its scrollbar
+        self.text_frame = ttk.Frame(self.root)
+        self.text_frame.grid(
+            column=0,
+            row=0,
+            sticky="nsew",
+            padx=10
+        )
+
+        self.text_frame.rowconfigure(0, weight=1)
+        self.text_frame.columnconfigure(0, weight=1)
+
+        # setup the text box with a scrollbar
+        self.scrollbar = AutoHideScrollbar(
+            self.text_frame,
+            orient="vertical"
+        )
+        self.text_box = tk.Text(
+            self.text_frame,
+            wrap="word",
+            yscrollcommand=self.scrollbar.set
+        )
+        self.scrollbar.config(command=self.text_box.yview)
         self.text_box.grid(
-                        column=0,
-                        row=0,
-                        sticky="nsew",
-                        padx=10
-                        )
+            column=0,
+            row=0,
+            sticky="nsew"
+        )
+        self.scrollbar.grid(
+            column=1,
+            row=0,
+            sticky="ns"
+        )
 
         # Frame to hold the dropdown and buttons
         self.controls_frame = tk.Frame(self.root, bg=self.BG)
@@ -51,7 +87,7 @@ class TextRecasterApp:
         )
 
         # Dropdown menu for format selection
-        dropdown_list = ["SQL Agent log", "DTSX Decode", "Format XML", "Format JSON", "URL Decode", "URL Encode"]
+        dropdown_list = ["SQL Agent log", "DTSX SQL Decode", "Format XML", "Format JSON", "URL Decode", "URL Encode"]
         self.dropdown = ttk.Combobox(
                         self.controls_frame,
                         values=dropdown_list,
@@ -98,7 +134,7 @@ class TextRecasterApp:
             processed_text = url_decode(input_text)
         elif choice == "URL Encode":
             processed_text = url_encode(input_text)
-        elif choice == "DTSX Decode":
+        elif choice == "DTSX SQL Decode":
             processed_text = dtsx_decode(input_text)
         return processed_text
 
